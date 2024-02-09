@@ -3,6 +3,7 @@ module github.com/SnowCait/historelay
 go 1.22.0
 
 require (
+	github.com/fiatjaf/eventstore v0.3.8
 	github.com/fiatjaf/khatru v0.3.1
 	github.com/nbd-wtf/go-nostr v0.28.1
 )
@@ -14,13 +15,14 @@ require (
 	github.com/decred/dcrd/crypto/blake256 v1.0.1 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.2.0 // indirect
 	github.com/fasthttp/websocket v1.5.7 // indirect
-	github.com/fiatjaf/eventstore v0.3.8 // indirect
 	github.com/gobwas/httphead v0.1.0 // indirect
 	github.com/gobwas/pool v0.2.1 // indirect
 	github.com/gobwas/ws v1.3.1 // indirect
+	github.com/jmoiron/sqlx v1.3.5 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/klauspost/compress v1.17.3 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
+	github.com/mattn/go-sqlite3 v1.14.18 // indirect
 	github.com/puzpuzpuz/xsync/v3 v3.0.2 // indirect
 	github.com/rs/cors v1.7.0 // indirect
 	github.com/savsgio/gotils v0.0.0-20230208104028-c358bd845dee // indirect
