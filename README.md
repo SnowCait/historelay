@@ -2,9 +2,9 @@
 
 Backup kind 0 and 3. Recovery anytime.
 
-Historelay is specialized to backup replaceable events.
-Accept kind 0 and 3 only.
-Recommend to add into your relay list as write only.
+Historelay is specialized to backup replaceable events.  
+Accept kind 0 and 3 only.  
+Recommend to add into your relay list as write only.  
 You can see history and can recovery at relay website.
 
 ## Build & Run
@@ -13,5 +13,5 @@ You can see history and can recovery at relay website.
 docker compose up -d
 ```
 
-Relay: `ws://localhost/`
+Relay: `ws://localhost/`  
 Website: `http://localhost/`
