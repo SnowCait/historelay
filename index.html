@@ -67,7 +67,19 @@
               tags: event.tags,
               created_at: Math.floor(Date.now() / 1000)
             };
-            ws.send(JSON.stringify(['EVENT', await window.nostr.signEvent(newEvent)]));
+            const signedEvent = await window.nostr.signEvent(newEvent);
+            ws.send(JSON.stringify(['EVENT', signedEvent]));
+
+            // Other relays
+            const relaysObject = await window.nostr.getRelays();
+            console.log('[relays]', relaysObject);
+            for (const url of Object.entries(relaysObject).map(([url]) => url)) {
+              const w = new WebSocket(url);
+              w.addEventListener('open', () => {
+                w.send(JSON.stringify(['EVENT', signedEvent]));
+                w.close();
+              });
+            }
           });
 
           const li = document.createElement('li');
