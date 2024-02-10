@@ -1,11 +1,11 @@
 # Historelay
 
-Backup kind 0 and 3. Recovery anytime.
+Backup kind 0 and 3. Recover anytime.
 
 Historelay is specialized to backup replaceable events.  
 Accept kind 0 and 3 only.  
 Recommend to add into your relay list as write only.  
-You can see history and can recovery at relay website.
+You can see history and can recover at relay website.
 
 ## Build & Run
 
