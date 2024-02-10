@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
+	"html/template"
+	"log"
 	"net/http"
 	"slices"
 	"strconv"
@@ -16,7 +18,7 @@ func main() {
 	acceptableKinds := []int{0, 3}
 	fmt.Println(acceptableKinds)
 
-	db := sqlite3.SQLite3Backend{DatabaseURL: "/data/historelay.sqlite"}
+	db := sqlite3.SQLite3Backend{DatabaseURL: "/data/historelay.sqlite?cache=shared&mode=rwc&_journal_mode=WAL"}
 	if err := db.Init(); err != nil {
 		panic(err)
 	}
@@ -43,15 +45,21 @@ func main() {
 	})
 
 	relay.StoreEvent = append(relay.StoreEvent, db.SaveEvent)
-	relay.DeleteEvent = append(relay.DeleteEvent, db.DeleteEvent)
 	relay.QueryEvents = append(relay.QueryEvents, db.QueryEvents)
 
 	mux := relay.Router()
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "text/html")
-		fmt.Fprintf(w, `<h1>Historelay</h1>`)
-	})
+	mux.HandleFunc("/", indexHandler)
 
 	fmt.Println("Running")
 	http.ListenAndServe("", relay)
+}
+
+func indexHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html")
+	t, err := template.ParseFiles("./index.html")
+	if err != nil {
+		log.Fatal("Parse: ", err)
+		return
+	}
+	t.Execute(w, nil)
 }

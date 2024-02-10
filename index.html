@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Historelay</title>
+  <style>
+    main {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    li {
+      border: 1px solid lightgray;
+    }
+  </style>
+  <script>
+    const relayUrl = 'ws://localhost/';
+
+    window.addEventListener('load', () => {
+      document.getElementById('nip07').addEventListener('click', async () => {
+        const pubkey = await window.nostr.getPublicKey();
+        console.log('[pubkey]', pubkey);
+        const ws = new WebSocket(relayUrl);
+        let eose = false;
+        ws.addEventListener('open', () => {
+          console.log('[open]', relayUrl);
+          const filter = {
+            kinds: [3],
+            authors: [pubkey]
+          };
+          ws.send(JSON.stringify(['REQ', '_', filter]))
+        });
+        ws.addEventListener('message', (e) => {
+          console.log('[message]', e.data);
+
+          const [type, , event] = JSON.parse(e.data);
+          if (type === 'EOSE') {
+            eose = true;
+            return;
+          }
+          if (type !== 'EVENT' || event === undefined) {
+            return;
+          }
+
+          const createdAt = document.createElement('div');
+          createdAt.textContent = new Date(event.created_at * 1000).toLocaleString();
+
+          const kind = document.createElement('div');
+          kind.textContent = `Kind ${event.kind}`;
+
+          const followeesCount = document.createElement('div');
+          followeesCount.textContent = `Followees: ${event.tags.length}`;
+
+          const recoveryButton = document.createElement('button');
+          recoveryButton.textContent = 'Recovery';
+          recoveryButton.addEventListener('click', async () => {
+            console.log('[recovery]', event);
+            const newEvent = {
+              kind: event.kind,
+              content: event.content,
+              tags: event.tags,
+              created_at: Math.floor(Date.now() / 1000)
+            };
+            ws.send(JSON.stringify(['EVENT', await window.nostr.signEvent(newEvent)]));
+          });
+
+          const li = document.createElement('li');
+          li.append(createdAt);
+          li.append(kind);
+          li.append(followeesCount);
+          li.append(recoveryButton);
+
+          const ul = document.getElementById('list');
+          if (eose) {
+            ul.prepend(li);
+          } else {
+            ul.append(li);
+          }
+        });
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <main>
+    <h1>Historelay</h1>
+    <p>Backup kind 0 and 3. Recovery anytime.</p>
+
+    <button id="nip07">Login with NIP-07</button>
+
+    <ul id="list"></ul>
+  </main>
+</body>
+
+</html>
